@@ -51,6 +51,7 @@ import (
 	"github.com/fluxcd/flux/pkg/remote"
 	"github.com/fluxcd/flux/pkg/ssh"
 	fluxsync "github.com/fluxcd/flux/pkg/sync"
+	"github.com/fluxcd/flux/pkg/tracing"
 )
 
 var version = "unversioned"
@@ -396,6 +397,13 @@ func main() {
 	shutdown := make(chan struct{})
 	// .. and this is to wait for other routines to shut down cleanly.
 	shutdownWg := &sync.WaitGroup{}
+
+	tracingCloser, err := tracing.SetupJaeger("flux")
+	if err != nil {
+		logger.Log("error", "failed to set up Jaeger", "error", err)
+	} else {
+		defer tracingCloser.Close()
+	}
 
 	go func() {
 		c := make(chan os.Signal, 1)

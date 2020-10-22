@@ -10,6 +10,7 @@ import (
 
 	"github.com/fluxcd/flux/pkg/metrics"
 	"github.com/go-kit/kit/log"
+	ot "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 
 	"github.com/fluxcd/flux/pkg/cluster"
@@ -45,6 +46,9 @@ type changeSet struct {
 
 // Sync starts the synchronization of the cluster with git.
 func (d *Daemon) Sync(ctx context.Context, started time.Time, newRevision string, rat ratchet) error {
+	span, ctx := ot.StartSpanFromContext(ctx, "Sync", ot.Tag{Key: "newRevision", Value: newRevision})
+	defer span.Finish()
+
 	// Load last-synced resources for comparison
 	lastResources, err := d.getLastResources(ctx, rat)
 	if err != nil {

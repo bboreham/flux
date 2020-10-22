@@ -29,6 +29,7 @@ import (
 	kresource "github.com/fluxcd/flux/pkg/cluster/kubernetes/resource"
 	"github.com/fluxcd/flux/pkg/policy"
 	"github.com/fluxcd/flux/pkg/resource"
+	"github.com/fluxcd/flux/pkg/tracing"
 )
 
 const (
@@ -398,9 +399,14 @@ func applyMetadata(ctx context.Context, res resource.Resource, syncSetName, chec
 		mixin["namespace"] = namespace
 	}
 
+	mixinAnnotations := map[string]string{}
 	if checksum != "" {
-		mixinAnnotations := map[string]string{}
 		mixinAnnotations[checksumAnnotation] = checksum
+		mixin["annotations"] = mixinAnnotations
+	}
+
+	if spanContext := tracing.SpanContextFromContext(ctx); spanContext != "" {
+		mixinAnnotations[tracing.TraceAnnotationKey] = spanContext
 		mixin["annotations"] = mixinAnnotations
 	}
 
