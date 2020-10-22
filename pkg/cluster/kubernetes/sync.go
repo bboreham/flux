@@ -86,7 +86,7 @@ func (c *Cluster) Sync(ctx context.Context, syncSet cluster.SyncSet) error {
 			logger.Log("info", "not applying resource; ignore annotation in cluster resource", "resource", cres.ResourceID())
 			continue
 		}
-		resBytes, err := applyMetadata(res, syncSet.Name, checkHex)
+		resBytes, err := applyMetadata(ctx, res, syncSet.Name, checkHex)
 		if err == nil {
 			cs.stage("apply", res.ResourceID(), res.Source(), resBytes)
 		} else {
@@ -375,7 +375,7 @@ func (c *Cluster) getAllowedGCMarkedResourcesInSyncSet(syncSetName string) (map[
 	return allowedSyncSetGCMarkedResources, nil
 }
 
-func applyMetadata(res resource.Resource, syncSetName, checksum string) ([]byte, error) {
+func applyMetadata(ctx context.Context, res resource.Resource, syncSetName, checksum string) ([]byte, error) {
 	definition := map[interface{}]interface{}{}
 	if err := yaml.Unmarshal(res.Bytes(), &definition); err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("failed to parse yaml from %s", res.Source()))
