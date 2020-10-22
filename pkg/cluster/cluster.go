@@ -30,7 +30,7 @@ type Cluster interface {
 	IsAllowedResource(resource.ID) bool
 	Ping() error
 	Export(ctx context.Context) ([]byte, error)
-	Sync(SyncSet) error
+	Sync(context.Context, SyncSet) error
 	PublicSSHKey(regenerate bool) (ssh.PublicKey, error)
 }
 

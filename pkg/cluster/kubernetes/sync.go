@@ -46,7 +46,7 @@ const (
 // necessarily indicate complete failure; some resources may succeed
 // in being synced, and some may fail (for example, they may be
 // malformed).
-func (c *Cluster) Sync(syncSet cluster.SyncSet) error {
+func (c *Cluster) Sync(ctx context.Context, syncSet cluster.SyncSet) error {
 	logger := log.With(c.logger, "method", "Sync")
 
 	// Keep track of the checksum of each resource, so we can compare

@@ -225,7 +225,7 @@ func doSync(ctx context.Context, manifestsStore manifests.Store, clus cluster.Cl
 	}
 
 	var resourceErrors []event.ResourceError
-	if err := fluxsync.Sync(syncSetName, resources, clus); err != nil {
+	if err := fluxsync.Sync(ctx, syncSetName, resources, clus); err != nil {
 		switch syncerr := err.(type) {
 		case cluster.SyncError:
 			logger.Log("err", err)

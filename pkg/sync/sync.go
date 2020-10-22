@@ -1,19 +1,21 @@
 package sync
 
 import (
+	"context"
+
 	"github.com/fluxcd/flux/pkg/cluster"
 	"github.com/fluxcd/flux/pkg/resource"
 )
 
 // Syncer has the methods we need to be able to compile and run a sync
 type Syncer interface {
-	Sync(cluster.SyncSet) error
+	Sync(context.Context, cluster.SyncSet) error
 }
 
 // Sync synchronises the cluster to the files under a directory.
-func Sync(setName string, repoResources map[string]resource.Resource, clus Syncer) error {
+func Sync(ctx context.Context, setName string, repoResources map[string]resource.Resource, clus Syncer) error {
 	set := makeSet(setName, repoResources)
-	if err := clus.Sync(set); err != nil {
+	if err := clus.Sync(ctx, set); err != nil {
 		return err
 	}
 	return nil
