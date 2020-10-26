@@ -371,7 +371,7 @@ func (c *Cluster) getAllowedGCMarkedResourcesInSyncSet(syncSetName string) (map[
 }
 
 func applyMetadata(ctx context.Context, res resource.Resource, syncSetName, checksum string) ([]byte, error) {
-	definition := map[interface{}]interface{}{}
+	definition := map[string]interface{}{}
 	if err := yaml.Unmarshal(res.Bytes(), &definition); err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("failed to parse yaml from %s", res.Source()))
 	}
@@ -404,7 +404,7 @@ func applyMetadata(ctx context.Context, res resource.Resource, syncSetName, chec
 		mixin["annotations"] = mixinAnnotations
 	}
 
-	mergo.Merge(&definition, map[interface{}]interface{}{
+	mergo.Merge(&definition, map[string]interface{}{
 		"metadata": mixin,
 	})
 
